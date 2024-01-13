@@ -1,12 +1,10 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const config = require("../config");
-const User = require("../models/user");
-
-const { secret } = config;
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const connect = require('../connect');
+const { secret } = require('../config');
 
 module.exports = (app, nextMain) => {
-  app.post("/login", (req, resp, next) => {
+  app.post('/login', (req, resp, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -14,32 +12,27 @@ module.exports = (app, nextMain) => {
     }
 
     // TODO: Authenticate the user
-    User.findOne({ email })
-      .then((user) => {
+    async function authenticateUser(email, password) {
+      try {
+        const db = await connect.connect();
+        const collection = db.collection('user');
+        const user = await collection.findOne({ email });
         if (!user) {
-          return resp.status(401).json({ error: "Credencial invalida" });
+          return { status: 404, message: 'Usuario no encontrado' };
         }
-        // It is necessary to confirm if the email and password
-        const passwordValid = bcrypt.compareSync(password, user.password);
-        if (!passwordValid) {
-          return resp.status(404).json({ error: "Credencial invalida" });
+        // match a user in the database
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          return { status: 401, message: 'Contraseña incorrecta' };
         }
-        const token = jwt.sign(
-          { userId: user._id, email: user.email },
-          secret,
-          {
-            expiresIn: "1h",
-          }
-        );
-        resp.json({ token });
-      })
-      .catch((error) => {
-        console.error("No se pudo autenticar user:", error);
-        next(error);
-      });
-
-    // match a user in the database
-    // If they match, send an access token created with JWT
+        // If they match, send an access token created with JWT
+        const token = jwt.sign({ uid: user._id, email: user.email }, secret);
+        return { token };
+      } catch (error) {
+        console.error('Error al autenticar', error);
+        return { status: 500, error: 'Error en la autenticación' };
+      }
+    }
 
     next();
   });
