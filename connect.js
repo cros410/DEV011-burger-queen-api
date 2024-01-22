@@ -5,9 +5,9 @@ const config = require('./config');
 const { dbUrl } = config;
 const client = new MongoClient(config.dbUrl);
 
-async function connect() {
+function connect() {
   try {
-    await client.connect();
+    //await client.connect();
     const db = client.db();
     return db;
   } catch (error) {
