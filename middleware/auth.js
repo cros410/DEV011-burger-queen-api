@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const connect = require('../connect');
 const config = require('../config');
 
 module.exports = (secret) => (req, resp, next) => {
@@ -17,23 +16,11 @@ module.exports = (secret) => (req, resp, next) => {
     }
 
     // TODO: Verify user identity using `decodeToken.uid`
-    module.exports.verifyUser = (decodedToken) =>
-      connect
-        .connect()
-        .then((db) => {
-          const collection = db.collection('user');
-          return collection.findOne({ _id: decodedToken.uid });
-        })
-        .then((user) => {
-          if (!user) {
-            throw new Error('Usuario no encontrado');
-          }
-          return user;
-        })
-        .catch((error) => {
-          console.error('Erro en la verificación:', error);
-          throw error;
-        });
+    if (!decodedToken.uid) {
+      return next(403);
+    }
+    req.user = { _id: decodedToken.uid };
+    next();
   });
 };
 
@@ -52,19 +39,20 @@ module.exports.isAuthenticated = (req) => {
   return false;
 };
 
-module.exports.isAdmin = (req) =>
+module.exports.isAdmin = (req) => {
   // TODO: Decide based on the request information whether the user is an admin
-
-  false;
-
-module.exports.requireAuth = (req, resp, next) =>
+  const { decoded } = module.exports.isAuthenticated(req);
+  return decoded && decoded.role === 'admin';
+};
+// eslint-disable-next-line no-nested-ternary
+module.exports.requireAuth = (req, resp, next) => {
   !module.exports.isAuthenticated(req) ? next(401) : next();
+};
 
-module.exports.requireAdmin = (req, resp, next) =>
-  // eslint-disable-next-line no-nested-ternary
-
+module.exports.requireAdmin = (req, resp, next) => {
   !module.exports.isAuthenticated(req)
     ? next(401)
     : !module.exports.isAdmin(req)
     ? next(403)
     : next();
+};

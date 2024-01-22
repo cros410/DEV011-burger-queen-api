@@ -1,15 +1,21 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
-const connect = require('../connect');
+const { connect } = require('../connect');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 const app = express();
 
-const { getUsers } = require('../controller/users');
-const users = require('../controller/users');
+const {
+  getUsers,
+  getUserUid,
+  postUser,
+  updateUser,
+  deleteUser,
+} = require('../controller/users');
+
 const error = require('../middleware/error');
 
-const initAdminUser = (app, next) => {
+const initAdminUser = async (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
   if (!adminEmail || !adminPassword) {
     return next();
@@ -17,32 +23,28 @@ const initAdminUser = (app, next) => {
 
   const adminUser = {
     email: adminEmail,
+    roles: 'admin',
     password: bcrypt.hashSync(adminPassword, 10),
-    roles: { admin: true },
   };
 
   // TODO: Create admin user
   // First, check if adminUser already exists in the database
-  connect.connect().then((db) => {
+  try {
+    const db = connect();
     const collection = db.collection('user');
-    collection
-      .findOne({ email: adminEmail })
-      .then((existingAdminUser) => {
-        if (!existingAdminUser) {
-          return collection.insertOne(adminUser);
-        }
-        console.log('El admin existente');
-        return Promise.resolve(existingAdminUser);
-      })
-      .then(() => {
-        console.log('Usuario creado');
-        next();
-      })
-      .catch((error) => {
-        console.error('Error al crear admin', error);
-        next();
-      });
-  });
+
+    const existingAdminUser = await collection.findOne({ email: adminEmail });
+    if (!existingAdminUser) {
+      await collection.insertOne(adminUser);
+    } else {
+      console.log('Admin existente');
+    }
+    console.log('Usuario creado');
+    next();
+  } catch (error) {
+    console.error('Error al crear admin', error);
+    next();
+  }
 };
 
 /*
@@ -77,51 +79,16 @@ module.exports = (app, next) => {
   // Solicitar=get users
   app.get('/users', requireAdmin, getUsers);
 
-  app.get('/users/:uid', requireAuth, (req, resp) => {
-    const userId = req.params.uid;
-    connect
-      .connect()
-      .then((db) => {
-        const collection = db.collection('user');
-        return collection.findOne({ _id: userId });
-      })
-      .then((user) => {
-        if (!user) {
-          resp.status(404).json({ message: 'Usuario no encontrado' });
-        } else {
-          resp.json(user);
-        }
-      })
-      .catch((error) => {
-        console.error('Error al obtener usuario', error);
-        resp.status(500).json({ error: 'Error al obtener usuer por id' });
-        next(error);
-      });
-  });
+  app.get('/users/:uid', requireAuth, getUserUid);
 
   // implementar ruta para agregar nuevo usuario TODO: Implement the route to add new users
-  app.post('/users', requireAdmin, (req, resp, next) => {
-    const userData = req.body;
-    User.create(userData)
-      .then((newUser) => resp.json(newUser))
-      .catch((error) => next(error));
-  });
+  app.post('/users', requireAdmin, postUser);
+
   // Actualizar=put usuario
-  app.put('/users/:uid', requireAuth, (req, resp, next) => {
-    const userId = req.params.uid;
-    const userData = req.body;
-    User.findByIdAndUpdate(userId, userData, { new: true })
-      .then((updatedUser) => resp.json(updatedUser))
-      .catch((error) => next(error));
-  });
+  app.put('/users/:uid', requireAuth, updateUser);
 
   // Ruta para eleminar=delete user
-  app.delete('/users/:uid', requireAuth, (req, resp, next) => {
-    const userId = req.params.uid;
-    User.findByIdAndDelete(userId)
-      .then((deletedUser) => resp.json({ message: 'Usuario eliminado' }))
-      .catch((error) => next(error));
-  });
+  app.delete('/users/:uid', requireAuth, deleteUser);
 
   initAdminUser(app, next);
 };
