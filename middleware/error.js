@@ -19,5 +19,5 @@ module.exports = (err, req, resp, next) => {
   }
 
   resp.status(statusCode).json({ statusCode, message });
-  // next();
+  next();
 };

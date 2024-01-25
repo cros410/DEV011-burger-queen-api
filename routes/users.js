@@ -79,7 +79,7 @@ module.exports = (app, next) => {
   // Solicitar=get users
   app.get('/users', requireAdmin, getUsers);
 
-  app.get('/users/:uid', requireAuth, getUserUid);
+  app.get('/users/:uid', getUserUid);
 
   // implementar ruta para agregar nuevo usuario TODO: Implement the route to add new users
   app.post('/users', requireAdmin, postUser);

@@ -35,12 +35,11 @@ module.exports = (app, nextMain) => {
         secret,
         { expiresIn: '1h' }
       );
+      console.log(token);
       return resp.status(200).json({ 'access token': token });
     } catch (error) {
       console.error('Error al autenticar', error);
       return resp.json({ status: 500, error: 'Error en la autenticación' });
-    } finally {
-      next();
     }
   });
   return nextMain();
