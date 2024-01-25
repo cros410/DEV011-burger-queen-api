@@ -3,6 +3,7 @@ const config = require('../config');
 
 module.exports = (secret) => (req, resp, next) => {
   const { authorization } = req.headers;
+  console.log(req.headers);
   if (!authorization) {
     return next();
   }
@@ -16,37 +17,44 @@ module.exports = (secret) => (req, resp, next) => {
     }
 
     // TODO: Verify user identity using `decodeToken.uid`
-    if (!decodedToken.uid) {
+    /* if (!decodedToken.uid) {
       return next(403);
-    }
-    req.user = { _id: decodedToken.uid };
-    next();
+    } */
+    req.userId = decodedToken.uid;
+    req.userRole = decodedToken.role;
+    console.log('usuario autenticado:', req.userId, 'rol:', req.userRole);
+    return next();
   });
 };
 
 module.exports.isAuthenticated = (req) => {
   // TODO: Decide based on the request information whether the user is authenticated
-  const token = req.headers.authorization;
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, config.secret);
-      return { success: true, decoded };
-    } catch (error) {
-      console.error('Error al verificar el token:', error);
-      return { success: false, error: ' Autenticación fallida' };
-    }
+  const userId = req.userId ? req.userId.toString() : null;
+  if (userId) {
+    console.log('2°usuario autenticado', userId);
+    return true;
   }
+
+  console.log('usuario no autenticado');
   return false;
 };
 
 module.exports.isAdmin = (req) => {
   // TODO: Decide based on the request information whether the user is an admin
-  const { decoded } = module.exports.isAuthenticated(req);
-  return decoded && decoded.role === 'admin';
+  const userRole = req.userRole ? req.userRole : null;
+  if (userRole === 'admin') {
+    console.log('el usuarioes admin');
+    return true;
+  }
+  console.log('el usuario no es admin');
+  return false;
 };
+
 // eslint-disable-next-line no-nested-ternary
 module.exports.requireAuth = (req, resp, next) => {
-  !module.exports.isAuthenticated(req) ? next(401) : next();
+  !module.exports.isAuthenticated(req)
+    ? resp.status(401).json({ error: 'No autenticado' })
+    : next();
 };
 
 module.exports.requireAdmin = (req, resp, next) => {

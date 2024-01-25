@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const { connect } = require('../connect');
 
 module.exports = {
@@ -20,7 +21,8 @@ module.exports = {
     try {
       const db = connect();
       const collection = db.collection('user');
-      const user = collection.findOne({ _id: req.params.uid });
+      const user = await collection.findOne({ _id: req.params.uid });
+
       if (!user) {
         resp.status(404).json({ error: 'Usuario no encontrado' });
         return;
@@ -33,59 +35,36 @@ module.exports = {
 
   postUser: async (req, resp, next) => {
     try {
+      if (!req.body.email || !req.body.password) {
+        return resp
+          .status(400)
+          .json({ error: 'Se requiere correo y contraseña' });
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(req.body.email)) {
+        return resp.status(400).json({ error: 'Formato no válido' });
+      }
       const db = connect();
       const collection = db.collection('user');
       const existinUser = await collection.findOne({ email: req.body.email });
       if (existinUser) {
-        throw new Error('Usuario ya está registrado');
+        return resp.status(403).json({ error: 'El usuario ya existe' });
       }
-      const newUser = await collection.insertOne(req.body);
-      resp.status(201).json(newUser.ops[0]);
+      const createUser = {
+        email: req.body.email,
+        password: await bcrypt.hash(req.body.password, 10),
+        role: req.body.role,
+      };
+      await collection.insertOne(createUser);
+      console.log(createUser);
+      resp.status(201).json({ createUser });
     } catch (error) {
       console.error('Error al agregar usuario', error);
       next(error);
     }
   },
 
-  updateUser: async (req, resp, next) => {
-    try {
-      const db = connect();
-      const collection = db.collection('user');
-      const existinUser = await collection.findOne({ _id: req.params.uid });
-      if (!existinUser) {
-        resp.status(404).json({ error: 'Usuario no encontrado' });
-        return;
-      }
-      const updatedUser = await collection.findOneAndUpdate(
-        { _id: req.params.uid },
-        { $set: req.body },
-        { returnDocument: 'after' }
-      );
-      resp.json(updatedUser.value);
-    } catch (error) {
-      console.error('Error al actualizar usuario', error);
-      next(error);
-    }
-  },
+  updateUser: async (req, resp, next) => {},
 
-  deleteUser: async (req, resp, next) => {
-    try {
-      const db = connect();
-      const collection = db.collection('user');
-      const existinUser = await collection.findOne({ _id: req.params.uid });
-      if (!existinUser) {
-        resp.status(404).json({ error: 'Usuario no encontrado' });
-        return;
-      }
-      const deleteUser = await collection.deleteOne({ _id: req.params.uid });
-      if (deleteUser.deletedCount === 1) {
-        resp.status(204).send();
-      } else {
-        resp.status(500).json({ error: 'No se pudo eliminar el usuario' });
-      }
-    } catch (error) {
-      console.error('Error al eliminar usuario', error);
-      next(error);
-    }
-  },
+  deleteUser: async (req, resp, next) => {},
 };
