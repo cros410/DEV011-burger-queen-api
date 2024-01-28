@@ -1,9 +1,7 @@
 const jwt = require('jsonwebtoken');
-const config = require('../config');
 
 module.exports = (secret) => (req, resp, next) => {
   const { authorization } = req.headers;
-  console.log(req.headers);
   if (!authorization) {
     return next();
   }
@@ -36,18 +34,18 @@ module.exports.isAuthenticated = (req) => {
   }
 
   console.log('usuario no autenticado');
-  return false;
+  return req.userId !== undefined;
 };
 
 module.exports.isAdmin = (req) => {
   // TODO: Decide based on the request information whether the user is an admin
   const userRole = req.userRole ? req.userRole : null;
   if (userRole === 'admin') {
-    console.log('el usuarioes admin');
+    console.log('el usuario es admin');
     return true;
   }
   console.log('el usuario no es admin');
-  return false;
+  return req.userRole === 'admin';
 };
 
 // eslint-disable-next-line no-nested-ternary
@@ -59,8 +57,8 @@ module.exports.requireAuth = (req, resp, next) => {
 
 module.exports.requireAdmin = (req, resp, next) => {
   !module.exports.isAuthenticated(req)
-    ? next(401)
+    ? resp.status(401).json({ error: 'No autenticado' })
     : !module.exports.isAdmin(req)
-    ? next(403)
+    ? resp.status(403).json({ error: 'No autorizado' })
     : next();
 };
