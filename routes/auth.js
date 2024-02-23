@@ -8,38 +8,37 @@ module.exports = (app, nextMain) => {
     const { email, password } = req.body;
 
     try {
-      if (!email || !password) {
-        return next(400);
-      }
-
+      // Conexión a la DB.
       const db = connect();
       const collection = db.collection('user');
+
+      // Verificación de user.
       const user = await collection.findOne({ email }, { password });
-      console.log(user);
+      if (!email || !password) {
+        return resp.status(400).json({ error: 'Ingresar email y contrtaseña' });
+      }
+
       if (!user) {
         return resp
           .status(404)
-          .json({ status: 404, message: 'Uusario no encontrado' });
+          .json({ status: 404, message: 'Usario no encontrado' });
       }
+
+      // Validación de contraseñas y creación de Token.
       const isMatch = await bcrypt.compare(password, user.password);
-      console.log(password, user.password);
-      /* if (!isMatch) {
-        console.log('Contraseña incorrecta');
-        return resp
-          .status(401)
-          .json({ status: 401, message: 'Contraseña incorrecta' });
-      } */
-      console.log('Autenticación exitosa');
-      const token = jwt.sign(
-        { uid: user._id, email: user.email, role: user.role },
-        secret,
-        { expiresIn: '1h' }
-      );
-      console.log(token);
-      return resp.status(200).json({ 'access token': token });
+      if (isMatch) {
+        const createToken = jwt.sign(
+          { uid: user._id, email: user.email, role: user.role },
+          secret,
+          { expiresIn: '1h' }
+        );
+        return resp.status(200).json({ token: createToken });
+      }
+      console.log('La constraseña no coincide');
+      return resp.status(401).json({ error: 'La contraseña no coincide' });
     } catch (error) {
       console.error('Error al autenticar', error);
-      return resp.json({ status: 500, error: 'Error en la autenticación' });
+      return next(500);
     }
   });
   return nextMain();
