@@ -10,17 +10,15 @@ module.exports = (secret) => (req, resp, next) => {
     return next();
   }
   jwt.verify(token, secret, (err, decodedToken) => {
+    // console.log('Error al verificar el token:', err);
     if (err) {
-      return next(403);
+      return next(new Error('No autenticado'));
     }
 
-    // TODO: Verify user identity using `decodeToken.uid`
-    /* if (!decodedToken.uid) {
-      return next(403);
-    } */
     req.userId = decodedToken.uid;
     req.userRole = decodedToken.role;
-    console.log('usuario autenticado:', req.userId, 'rol:', req.userRole);
+
+    // console.log('usuario autenticado:', req.userId, 'rol:', req.userRole);
     return next();
   });
 };
@@ -29,11 +27,11 @@ module.exports.isAuthenticated = (req) => {
   // TODO: Decide based on the request information whether the user is authenticated
   const userId = req.userId ? req.userId.toString() : null;
   if (userId) {
-    console.log('2°usuario autenticado', userId);
+    // console.log('2°usuario autenticado', userId);
     return true;
   }
 
-  console.log('usuario no autenticado');
+  // console.log('usuario no autenticado');
   return req.userId !== undefined;
 };
 
@@ -41,10 +39,10 @@ module.exports.isAdmin = (req) => {
   // TODO: Decide based on the request information whether the user is an admin
   const userRole = req.userRole ? req.userRole : null;
   if (userRole === 'admin') {
-    console.log('el usuario es admin');
+    // console.log('el usuario es admin');
     return true;
   }
-  console.log('el usuario no es admin');
+  // console.log('el usuario no es admin');
   return req.userRole === 'admin';
 };
 

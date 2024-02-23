@@ -23,8 +23,8 @@ const initAdminUser = async (app, next) => {
 
   const adminUser = {
     email: adminEmail,
-    roles: 'admin',
     password: bcrypt.hashSync(adminPassword, 10),
+    role: 'admin',
   };
 
   // TODO: Create admin user
@@ -79,7 +79,7 @@ module.exports = (app, next) => {
   // Solicitar=get users
   app.get('/users', requireAdmin, getUsers);
 
-  app.get('/users/:uid', getUserUid);
+  app.get('/users/:uid', requireAuth, getUserUid);
 
   // implementar ruta para agregar nuevo usuario TODO: Implement the route to add new users
   app.post('/users', requireAdmin, postUser);

@@ -7,8 +7,9 @@ const client = new MongoClient(config.dbUrl);
 
 function connect() {
   try {
-    //await client.connect();
-    const db = client.db();
+    // await client.connect();
+    // console.log('Conexión exitosa a la base de datos');
+    const db = client.db('Burger-Queen-Api');
     return db;
   } catch (error) {
     console.error('Error de conexión a la base de datos:', error);

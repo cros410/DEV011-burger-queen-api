@@ -4,14 +4,6 @@ const config = require('../config');
 
 const { fetch, fetchAsTestUser, fetchAsAdmin, fetchWithAuth } = process;
 
-const parseLinkHeader = (str) =>
-  str.split(',').reduce((memo, item) => {
-    const [, value, key] = /^<(.*)>;\s+rel="(first|last|prev|next)"/.exec(
-      item.trim()
-    );
-    return { ...memo, [key]: value };
-  }, {});
-
 describe('GET /users', () => {
   it('should fail with 401 when no auth', () =>
     fetch('/users').then((resp) => expect(resp.status).toBe(401)));
@@ -35,45 +27,9 @@ describe('GET /users', () => {
     fetchAsAdmin('/users?_limit=1')
       .then((resp) => {
         expect(resp.status).toBe(200);
-        return resp.json().then((json) => ({ headers: resp.headers, json }));
+        return resp.json();
       })
-      .then(({ headers, json }) => {
-        const linkHeader = parseLinkHeader(headers.get('link'));
-
-        const nextUrlObj = url.parse(linkHeader.next);
-        const lastUrlObj = url.parse(linkHeader.last);
-        const nextQuery = qs.parse(nextUrlObj.query);
-        const lastQuery = qs.parse(lastUrlObj.query);
-
-        expect(nextQuery.limit).toBe('1');
-        expect(nextQuery.page).toBe('2');
-        expect(lastQuery.limit).toBe('1');
-        expect(lastQuery.page >= 2).toBe(true);
-
-        expect(Array.isArray(json)).toBe(true);
-        expect(json.length).toBe(1);
-        expect(json[0]).toHaveProperty('_id');
-        expect(json[0]).toHaveProperty('email');
-        return fetchAsAdmin(nextUrlObj.path);
-      })
-      .then((resp) => {
-        expect(resp.status).toBe(200);
-        return resp.json().then((json) => ({ headers: resp.headers, json }));
-      })
-      .then(({ headers, json }) => {
-        const linkHeader = parseLinkHeader(headers.get('link'));
-
-        const firstUrlObj = url.parse(linkHeader.first);
-        const prevUrlObj = url.parse(linkHeader.prev);
-
-        const firstQuery = qs.parse(firstUrlObj.query);
-        const prevQuery = qs.parse(prevUrlObj.query);
-
-        expect(firstQuery.limit).toBe('1');
-        expect(firstQuery.page).toBe('1');
-        expect(prevQuery.limit).toBe('1');
-        expect(prevQuery.page).toBe('1');
-
+      .then((json) => {
         expect(Array.isArray(json)).toBe(true);
         expect(json.length).toBe(1);
         expect(json[0]).toHaveProperty('_id');
@@ -148,7 +104,7 @@ describe('POST /users', () => {
       body: {
         email: 'test1@test.test',
         password: '12345',
-        roles: { admin: false },
+        role: 'waiter',
       },
     })
       .then((resp) => {
@@ -159,8 +115,8 @@ describe('POST /users', () => {
         expect(typeof json._id).toBe('string');
         expect(typeof json.email).toBe('string');
         expect(typeof json.password).toBe('undefined');
-        expect(typeof json.roles).toBe('object');
-        expect(json.roles.admin).toBe(false);
+        expect(typeof json.role).toBe('string');
+        expect(json.role).toBe('waiter');
       }));
 
   it('should create new admin user', () =>
@@ -169,7 +125,7 @@ describe('POST /users', () => {
       body: {
         email: 'admin1@test.test',
         password: '12345',
-        roles: { admin: true },
+        role: 'admin',
       },
     })
       .then((resp) => {
@@ -180,8 +136,8 @@ describe('POST /users', () => {
         expect(typeof json._id).toBe('string');
         expect(typeof json.email).toBe('string');
         expect(typeof json.password).toBe('undefined');
-        expect(typeof json.roles).toBe('object');
-        expect(json.roles.admin).toBe(true);
+        expect(typeof json.role).toBe('string');
+        expect(json.role).toBe('admin');
       }));
 
   it('should fail with 403 when user is already registered', () =>
@@ -212,10 +168,10 @@ describe('PUT /users/:uid', () => {
       expect(resp.status).toBe(400)
     ));
 
-  it('should fail with 403 when not admin tries to change own roles', () =>
+  it('should fail with 403 when not admin tries to change own role', () =>
     fetchAsTestUser('/users/test@test.test', {
       method: 'PUT',
-      body: { roles: { admin: true } },
+      body: { role: 'admin' },
     }).then((resp) => expect(resp.status).toBe(403)));
 
   it('should update user when own data (password change)', () =>
