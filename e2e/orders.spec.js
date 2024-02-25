@@ -24,7 +24,7 @@ describe('POST /orders', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test1',
           price: 10,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -64,7 +64,7 @@ describe('POST /orders', () => {
         expect(typeof json.dateEntry).toBe('string');
         expect(Array.isArray(json.products)).toBe(true);
         expect(json.products.length).toBe(1);
-        expect(json.products[0].product.name).toBe('Test');
+        expect(json.products[0].product.name).toBe('Test1');
         expect(json.products[0].product.price).toBe(10);
       }));
 
@@ -73,7 +73,7 @@ describe('POST /orders', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test2',
           price: 25,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -112,7 +112,7 @@ describe('POST /orders', () => {
         expect(typeof json.dateEntry).toBe('string');
         expect(Array.isArray(json.products)).toBe(true);
         expect(json.products.length).toBe(1);
-        expect(json.products[0].product.name).toBe('Test');
+        expect(json.products[0].product.name).toBe('Test2');
         expect(json.products[0].product.price).toBe(25);
       }));
 });
@@ -126,7 +126,7 @@ describe('GET /orders', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test3',
           price: 10,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -197,7 +197,7 @@ describe('GET /orders', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test4',
           price: 10,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -276,7 +276,7 @@ describe('GET /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test5',
           price: 99,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -317,7 +317,7 @@ describe('GET /orders/:orderId', () => {
       })
       .then((json) => {
         expect(json.products.length).toBe(1);
-        expect(json.products[0].product.name).toBe('Test');
+        expect(json.products[0].product.name).toBe('Test5');
         expect(json.products[0].product.price).toBe(99);
       }));
 
@@ -326,7 +326,7 @@ describe('GET /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test6',
           price: 99,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -367,8 +367,8 @@ describe('GET /orders/:orderId', () => {
       })
       .then((json) => {
         expect(json.products.length).toBe(1);
-        expect(json.products[0].product.name).toBe('Test');
-        expect(json.products[0].product.price).toBe(10);
+        expect(json.products[0].product.name).toBe('Test6');
+        expect(json.products[0].product.price).toBe(99);
       }));
 });
 
@@ -389,7 +389,7 @@ describe('PUT /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test7',
           price: 99,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -433,7 +433,7 @@ describe('PUT /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test8',
           price: 99,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -480,7 +480,7 @@ describe('PUT /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test14',
           price: 99,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -584,7 +584,7 @@ describe('PUT /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test15',
           price: 99,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',
@@ -651,7 +651,7 @@ describe('DELETE /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test16',
           price: 99,
           image:
             'https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg',

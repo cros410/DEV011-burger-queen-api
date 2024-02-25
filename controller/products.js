@@ -9,8 +9,8 @@ module.exports = {
       const collection = db.collection('products');
 
       // Parametros para paginación.
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query._limit) || 10;
+      const page = parseInt(req.query.page, 10) || 1;
+      const limit = parseInt(req.query._limit, 10) || 10;
       const start = (page - 1) * limit;
 
       // Información pagincaión.
@@ -20,15 +20,19 @@ module.exports = {
         .limit(limit)
         .toArray();
 
-      /* // Respuesta con info de paginación.
-      const response = {
+      // Respuesta con info de paginación.
+      const dataProduct = {
         totalItems: products.length,
         totalPages: Math.ceil(products.length / limit),
         currentPage: page,
         products,
-      }; */
-
-      resp.json(products);
+        limit,
+      };
+      if (limit) {
+        resp.status(200).json(products);
+      } else {
+        resp.status(200).json(dataProduct);
+      }
     } catch (error) {
       console.error('Error al obtener productos', error);
       resp.status(500).json({ error: 'Error al obtener productos' });
