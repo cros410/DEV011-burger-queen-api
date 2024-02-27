@@ -6,7 +6,7 @@ La Burger Queen API es una aplicación backend diseñada para gestionar pedidos 
 
 Además, ofrece endpoints para agregar, ver, actualizar y eliminar productos, así como para realizar y gestionar órdenes de productos.
 
-### Características Pincipales
+### Características Principales
 
 1. Autenticación de Usuarios: Utiliza tokens JWT para autenticar y autorizar las solicitudes de los usuarios.
 
@@ -29,7 +29,7 @@ Principales endpoints y sus funciones:
 
 `PUT/users/:uid`: Actualiza información de un usuario. Requiere autenticación y el ID del usuario a modificar.
 
-`DELETE/users/:uid`: Elimina un usuario. Requiere autenticación y permisos de adminitrador.
+`DELETE/users/:uid`: Elimina un usuario. Requiere autenticación y permisos de administrador.
 
 **Productos**
 
@@ -55,7 +55,9 @@ Principales endpoints y sus funciones:
 
 `DELETE/orders/:orderid`: Elimina una orden. Requiere autenticación y permisos de administrador.
 
-### Códigos de estados
+### Códigos de Estados
+
+`200 OK`: Indica que la solicitud ha tenido éxito.
 
 `400 Bad Request`: Indica que la solicitud es incorrecta o no se pudo procesar.
 
@@ -67,9 +69,9 @@ Principales endpoints y sus funciones:
 
 `500 Internal Server Error`: Indica que se produjo un error en el servidor y no se puedo completar la solicitud.
 
-_Servidor_: Es un programa informático que proporciona recursos, datos, servicios o funcionalidades a otros programas llamados clientes a través de una red.
+_Servidor_: Un programa informático que proporciona recursos, datos, servicios o funcionalidades a otros programas llamados clientes a través de una red.
 
-_Cliente_: Es un programa informático o una aplicación que solicita y consume recursos o servicios proporcionados por un servidor remoto a través de una red.
+_Cliente_: Un programa informático o una aplicación que solicita y consume recursos o servicios proporcionados por un servidor remoto a través de una red.
 
 ## Tecnologías Utilizadas
 
@@ -87,4 +89,4 @@ _Cliente_: Es un programa informático o una aplicación que solicita y consume 
 
 `Postman`: Herramienta utilizada para probar y documentar los endpoints.
 
-`Jest`: Framework de pruebas de JavaScript, utilizado para pruebas unitarias y de integración para el proyecto.
+`Jest`: Framework de pruebas de JavaScript con un enfoque en la simplicidad, utilizado para pruebas unitarias y de integración para el proyecto.

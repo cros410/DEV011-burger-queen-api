@@ -168,7 +168,7 @@ module.exports = {
       }
       if (
         Object.prototype.hasOwnProperty.call(requestBody, 'role') &&
-        authenticatedUserId === req.params.uid
+        authenticatedUserId !== req.params.uid
       ) {
         return resp
           .status(403)

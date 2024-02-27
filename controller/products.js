@@ -68,18 +68,23 @@ module.exports = {
     try {
       // Conexión a DB.
       const db = connect();
+      if (!db) {
+        return resp
+          .status(500)
+          .json({ error: 'Error al conectar a la base de datos' });
+      }
       const collection = db.collection('products');
       const { name, price, image, type } = req.body;
-
-      // Buscar producto.
-      const productExist = await collection.findOne({ name });
-      if (productExist) {
-        return resp.status(403).json({ error: 'Producto existente' });
-      }
 
       // Verificar propiedades.
       if (!name || !price) {
         return resp.status(400).json({ error: 'Faltan propiedades' });
+      }
+
+      // Buscar producto.
+      const productExist = await collection.findOne({ name });
+      if (productExist) {
+        return resp.status(400).json({ error: 'Producto existente' });
       }
 
       // Crear nuevo producto.
