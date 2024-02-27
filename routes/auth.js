@@ -19,9 +19,7 @@ module.exports = (app, nextMain) => {
       }
 
       if (!user) {
-        return resp
-          .status(404)
-          .json({ status: 404, message: 'Usario no encontrado' });
+        return resp.status(404).json({ error: 'Usario no encontrado' });
       }
 
       // Validación de contraseñas y creación de Token.
@@ -32,9 +30,8 @@ module.exports = (app, nextMain) => {
           secret,
           { expiresIn: '1h' }
         );
-        return resp.status(200).json({ token: createToken });
+        return resp.json({ token: createToken });
       }
-      console.log('La constraseña no coincide');
       return resp.status(401).json({ error: 'La contraseña no coincide' });
     } catch (error) {
       console.error('Error al autenticar', error);

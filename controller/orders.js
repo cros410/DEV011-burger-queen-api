@@ -24,7 +24,7 @@ module.exports = {
         status,
         dateEntry: new Date(),
       };
-
+      console.log('status:', createOrder);
       // Insertar nueva orden.
       await collection.insertOne(createOrder);
 
@@ -157,7 +157,10 @@ module.exports = {
       }
 
       // Actualizar el estado.
-      await collection.updateOne({ _id: objectId }, { $set: { status } });
+      await collection.updateOne(
+        { _id: objectId },
+        { $set: { status, dateProcessed: order.dateProcessed } }
+      );
 
       // Obtener orden actual.
       const updateOrder = await collection.findOne({ _id: objectId });

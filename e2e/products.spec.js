@@ -2,19 +2,19 @@ const { fetch, fetchAsTestUser, fetchAsAdmin } = process;
 
 describe('POST /products', () => {
   it('should fail with 401 when no auth', () =>
-    fetch('/products', { method: 'POST' }).then((resp) =>
-      expect(resp.status).toBe(401)
-    ));
+    fetch('/products', { method: 'POST' }).then((resp) => {
+      expect(resp.status).toBe(401);
+    }));
 
   it('should fail with 403 when not admin', () =>
-    fetchAsTestUser('/products', { method: 'POST' }).then((resp) =>
-      expect(resp.status).toBe(403)
-    ));
+    fetchAsTestUser('/products', { method: 'POST' }).then((resp) => {
+      expect(resp.status).toBe(403);
+    }));
 
   it('should fail with 400 when bad props', () =>
-    fetchAsAdmin('/products', { method: 'POST' }).then((resp) =>
-      expect(resp.status).toBe(400)
-    ));
+    fetchAsAdmin('/products', { method: 'POST' }).then((resp) => {
+      expect(resp.status).toBe(400);
+    }));
 
   it('should create product as admin', () =>
     fetchAsAdmin('/products', {
