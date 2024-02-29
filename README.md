@@ -2,7 +2,7 @@
 
 ## Acerca de la API
 
-La Burger Queen API es una aplicación backend diseñada para gestionar pedidos y productos en un restaurant llamdo Burger Queen. Proporcionar una interfaz de programación de aplicaciones (API) que permite a los clientes realizar pedidos y a los empleados administrar los productos y órdenes de manera eficiente.
+La Burger Queen API es una aplicación backend diseñada para gestionar pedidos y productos en un restaurant llamdo Burger Queen. Proporciona una interfaz de programación de aplicaciones (API) que permite a los clientes realizar pedidos y a los empleados administrar los productos y órdenes de manera eficiente.
 
 Además, ofrece endpoints para agregar, ver, actualizar y eliminar productos, así como para realizar y gestionar órdenes de productos.
 
