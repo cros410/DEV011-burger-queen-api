@@ -18,11 +18,13 @@
   },
   "dependencies": {
     "@shelf/jest-mongodb": "^4.1.7",
-    "bcrypt": "^5.0.1",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.19.0",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
-    "mongodb-memory-server": "^8.12.2"
+    "mongodb": "6.3",
+    "mongodb-memory-server": "^8.12.2",
+    "mongoose": "^8.0.3"
   },
   "devDependencies": {
     "docdash": "^1.2.0",
@@ -30,7 +32,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.22.1",
     "gh-pages": "^3.1.0",
-    "jest": "^27.0.1",
+    "jest": "^27.5.1",
     "jsdoc": "^3.6.6",
     "jsdoc-http-plugin": "^0.3.2",
     "node-fetch": "^3.1.0",
@@ -39,5 +41,8 @@
   "bootcamp": {
     "createdAt": "2023-11-23T20:23:59.750Z",
     "commit": "de8f3a8dd3f24452f18e56bd8efae4d99e7fe353"
-  }
+  },
+  "description": "* [1. Preámbulo](#1-pre%C3%A1mbulo)\r * [2. Resumen del proyecto](#2-resumen-del-proyecto)\r * [3. Objetivos de aprendizaje](#3-objetivos-de-aprendizaje)\r * [4. Consideraciones generales](#4-consideraciones-generales)\r * [5. Criterios de aceptación mínimos del proyecto](#5-criterios-de-aceptaci%C3%B3n-m%C3%ADnimos-del-proyecto)\r * [6. Hacker (Devops) Edition con Docker](#6-hacker-%28devops%29-edition-con-docker)\r * [7. Pistas, tips y lecturas complementarias](#7-pistas-tips-y-lecturas-complementarias)",
+  "keywords": [],
+  "author": ""
 }

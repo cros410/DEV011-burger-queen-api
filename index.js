@@ -12,8 +12,11 @@ app.set('config', config);
 app.set('pkg', pkg);
 
 // parse application/x-www-form-urlencoded
+// Configurar middleware para analizar cuerpos de solicitudes con formato x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
+// Configurar middleware para analizar cuerpos de solicitudes con formato JSON
 app.use(express.json());
+// Configurar middleware de autenticación con una clave secreta
 app.use(authMiddleware(secret));
 
 // Registrar rutas
