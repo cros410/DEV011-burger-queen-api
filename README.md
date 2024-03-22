@@ -10,7 +10,7 @@ Además, ofrece endpoints para agregar, ver, actualizar y eliminar productos, as
 
 1. Autenticación de Usuarios: Utiliza tokens JWT para autenticar y autorizar las solicitudes de los usuarios.
 
-2. Gestión de Productos: Permite a los empleados agregar, ver, actualizar y eliminar productos del menú de Burger Queen. C ada producto tiene un nombre, precio y categoría asociada.
+2. Gestión de Productos: Permite a los empleados agregar, ver, actualizar y eliminar productos del menú de Burger Queen. Cada producto tiene un nombre, precio y categoría asociada.
 
 3. Gestión de Órdenes: Los usuarios pueden realizar órdenes de productos disponibles en el menú. Los empleados pueden ver, actualizar y eliminar los órdenes existentes.
 
